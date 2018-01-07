@@ -5,7 +5,7 @@
           <li v-for="group in data" class="list-group" ref="listGroup">
               <h2 class="list-group-title">{{group.title}}</h2>
               <ul>
-                  <li v-for="item in group.items" class="list-group-item">
+                  <li v-for="item in group.items" class="list-group-item" @click="selectItem(item)">
                       <img v-lazy="item.avatar" class="avatar">
                       <span class="name">{{item.name}}</span>
                   </li>
@@ -74,6 +74,9 @@
             }
         },
         methods: {
+            selectItem(item) {
+                this.$emit('select',item)
+            },
             //点击字母索引，页面滚定到索引位置
             onShortcutTouchStart(e) {
                 let anchorIndex = getData(e.target,'index')
@@ -94,7 +97,7 @@
                 this.scrollY = pos.y
             },
             _scrollTo(index) {
-                //!!!!
+                //过滤点击无效区域
                 if (!index && index !== 0) {
                     return // 过滤掉index=null的情况
                 }
@@ -137,7 +140,7 @@
                 for (let i = 0; i < listHeight.length - 1; i++) {
                   let height1 = listHeight[i]
                   let height2 = listHeight[i + 1]
-                  //必须是 >= 
+                  //必须是 >= ffou ze dianji suoyin bugaoliang
                   if (-newY >= height1 && -newY < height2) {
                     this.currentIndex = i
                     this.diff = height2 - (-newY)

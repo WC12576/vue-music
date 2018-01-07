@@ -41,3 +41,28 @@ export function getSingerList() { // 请求歌单数据
     console.log(e)
   })
 }
+
+export function getSingerDetail(singerId) {
+  const url = '/api/getSingerDetail'
+
+  const data = Object.assign({}, commonParams, {
+    hostUin:0,
+    format:'jsonp',
+    platform: 'yqq',
+    needNewCode:0,
+    order:'listen',
+    begin:0,
+    num:100,
+    songstatus:1,
+    singermid:singerId,
+    g_tk:5381
+  })
+
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+}
