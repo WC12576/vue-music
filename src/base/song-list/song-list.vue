@@ -1,7 +1,7 @@
 <template>
     <div class="song-list">
         <ul>
-            <li class="item" v-for="(song,index) in songs">
+            <li class="item" v-for="(song,index) in songs" @click="selectItem(song, index)">
                 <div class="content">
                     <h2 class="name">
                         {{song.name}}
