@@ -1,6 +1,8 @@
 <template>
     <div class="player" v-show="playList.length > 0">
-        <div class="normal-player" v-show="fullScreen">
+      <transition name="normal" @enter="enter" @after-enter="afterEnter"
+                                @leave="leave" @after-leave="afterLeave">
+         <div class="normal-player" v-show="fullScreen">
             <div class="background">
                 <img width="100%" height="100%" :src="currentSong.image">
             </div>
@@ -13,8 +15,8 @@
             </div>
             <div class="middle">
                 <div class="middle-l">
-                    <div class="cd-wrapper">
-                        <div class="cd">
+                    <div class="cd-wrapper" ref="cdWrapper">
+                        <div class="cd" :class="cdClass">
                             <img class="image" :src="currentSong.image">
                         </div>
                     </div>
@@ -25,45 +27,72 @@
                     <div class="icon i-left">
                         <i class="icon-sequence"></i>
                     </div>
-                    <div class="icon i-left">
-                        <i class="icon-prev"></i>
+                    <div class="icon i-left" :class="disableClass">
+                        <i class="icon-prev" @click="prev"></i>
                     </div>
-                    <div class="icon i-center">
-                        <i class="icon-next"></i>
+                    <div class="icon i-center" :class="disableClass">
+                        <i :class="playIcon" @click="togglePlaying"></i>
                     </div>
-                    <div class="icon i-right">
-                        <i class="icon-sequence"></i>
+                    <div class="icon i-right" :class="disableClass">
+                        <i class="icon-next" @click="next"></i>
                     </div><div class="icon i-right">
                         <i class="icon-not-favorite"></i>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="mini-player" v-show="!fullScreen" @click="open">
+         </div>
+      </transition> 
+      <transition name="mini">
+          <div class="mini-player" v-show="!fullScreen" @click="open">
             <div class="icon">
-                <img width="40" height="40" :src="currentSong.image">
+                <img width="40" height="40" :src="currentSong.image" :class="cdClass">
             </div>
             <div class="text">
                 <h2 class="name" v-html="currentSong.name"></h2>
                 <p class="desc" v-html="currentSong.singer"></p>
             </div>
             <div class="control">
+                <i :class="miniIcon" @click.stop="togglePlaying"></i>
+            </div>
+            <div class="control">
                 <i class="icon-playlist"></i>
             </div>
-        </div>
+          </div>
+      </transition> 
+      <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error"></audio>  
     </div>
 </template>
 
 <script>
 import {mapGetters,mapMutations} from 'vuex'
+import animations from 'create-keyframe-animation'
 
 
 export default {
+    data() {
+      return {
+        songReady: false
+      }
+    },
     computed: {
+      playIcon() {
+        return this.playing ? 'icon-pause' : 'icon-play'
+      },
+      miniIcon() {
+        return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+      },
+      cdClass() {
+        return this.playing ? 'play': 'play pause'
+      },
+      disableClass() {
+        return this.songReady ? '' : 'disable'
+      },
         ...mapGetters([
             'fullScreen',
             'playList',
-            'currentSong'
+            'currentSong',
+            'playing',
+            'currentIndex'
         ])
     },
     methods: {
@@ -73,9 +102,116 @@ export default {
         open() {
             this.setFullScreen(true)
         },
+        togglePlaying() {
+          if(!this.songReady) {
+            return
+          }
+          this.setPlayState(!this.playing)
+        },
+        next() {
+          if(!this.songReady) {
+            return
+          }
+          let index = this.currentIndex + 1
+          if(index === this.playList.length) {
+            index = 0
+          }
+          this.setCurrentIndex(index)
+          if(!this.playing) {
+            this.togglePlaying()
+          }
+          this.songReady = false
+        },
+        prev() {
+          if(!this.songReady) {
+            return
+          }
+          let index = this.currentIndex - 1
+          if(index === 0) {
+            index = this.playList.length - 1
+          }
+          this.setCurrentIndex(index)
+          if(!this.playing) {
+            this.togglePlaying()
+          }
+          this.songReady = false
+        },
+        ready() {
+          this.songReady = true
+        },
+        error() {
+          this.songReady = true
+        },
+        enter(ele,done) {
+          const {x,y,scale} = this._getPosAndScale()
+          let animation = {
+            0: {
+              transform:`translate3d(${x}px,${y}px,0) scale(${scale})`
+            },
+            60: {
+              transform:`translate3d(0,0,0) scale(1.1)`
+            },
+            100: {
+              transform:`translate3d(0,0,0) scale(1)`
+            }
+          }
+          animations.registerAnimation({
+            name: 'move',
+            animation,
+            presets: {
+              duration: 400,
+              easing: 'linear'
+            }
+          })
+          animations.runAnimation(this.$refs.cdWrapper,'move',done)
+        },
+        afterEnter() {
+          animations.unregisterAnimation('move')
+          this.$refs.cdWrapper.style.animation = ''
+        },
+        leave(ele,done) {
+          this.$refs.cdWrapper.style.transition = `all 0.4s`
+          const {x,y,scale} = this._getPosAndScale()
+          this.$refs.cdWrapper.style.transform = `translate3d(${x}px,${y}px,0) scale(${scale})`
+          this.$refs.cdWrapper.addEventListener('transitionend',done)
+        },
+        afterLeave() {
+          this.$refs.cdWrapper.style.transition = ''
+          this.$refs.cdWrapper.style.transform = ''
+        },
+        _getPosAndScale() {
+          const targetWidth = 40
+          const paddingLeft =40
+          const paddingBottom = 30
+          const paddingTop = 80
+          const width = window.innerWidth * 0.8
+          const scale = targetWidth / width
+          const x = -(window.innerWidth / 2 -paddingLeft)
+          const y = (window.innerHeight - paddingTop - paddingBottom -width / 2)
+          return {
+            x,
+            y,
+            scale
+          }
+        },
         ...mapMutations({
-            setFullScreen: 'SET_FULL_SCREEN'
+            setFullScreen: 'SET_FULL_SCREEN',
+            setPlayState: 'SET_PLAYING_STATE',
+            setCurrentIndex: 'SET_CURRENT_INDEX'
         })
+    },
+    watch: {
+      currentSong() {
+        this.$nextTick(() => {
+          this.$refs.audio.play()
+        })
+      },
+      playing(newPlaying) {
+        this.$nextTick(() => {
+          let audio = this.$refs.audio
+          newPlaying ? audio.play() :audio.pause()
+        })
+      },
     } 
 }
 </script>
