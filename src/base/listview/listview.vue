@@ -140,7 +140,7 @@
                 for (let i = 0; i < listHeight.length - 1; i++) {
                   let height1 = listHeight[i]
                   let height2 = listHeight[i + 1]
-                  //必须是 >= ffou ze dianji suoyin bugaoliang
+                  //必须是 >= fou ze dian ji suo yin bu gao liang
                   if (-newY >= height1 && -newY < height2) {
                     this.currentIndex = i
                     this.diff = height2 - (-newY)
