@@ -96,6 +96,9 @@
             scroll(pos) {
                 this.scrollY = pos.y
             },
+            refresh() {
+                this.$refs.listview.refresh()
+            },
             _scrollTo(index) {
                 //过滤点击无效区域
                 if (!index && index !== 0) {
@@ -233,7 +236,7 @@
         line-height: 30px
         padding-left: 20px
         font-size: $font-size-small
-        color: $color-text-l
+        color: $color-theme
         background: $color-highlight-background
     .loading-container
       position: absolute

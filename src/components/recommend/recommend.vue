@@ -40,9 +40,11 @@
      import Slider from 'base/slider/slider'
      import Scroll from 'base/scroll/scroll'
      import Loading from 'base/loading/loading'
+     import {playListMixin} from 'common/js/mixin'
      
 
      export default {
+       mixins:[playListMixin],
          data() {
              return {
                  recommends: [],
@@ -54,6 +56,11 @@
              this._getDiscList()
          },
          methods: {
+            handlePlayList(playList) {
+                const bottom = playList.length>0 ? '60px' : ''
+                this.$refs.recommend.style.bottom = bottom
+                this.$refs.scroll.refresh()
+            },
              //6sp滚不到底？？？
              loadImage() {
                  if(!this.checkloaded) {
