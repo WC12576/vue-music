@@ -17,7 +17,7 @@
         <Scroll :data="songs" class="list" ref="list" 
                 :listen-scroll="listenScroll" :probe-type="probeType" @scroll="scroll">
             <div class="song-list-wrapper">
-                <song-list :songs="songs" @select="selectItem"></song-list>
+                <song-list :rank="rank" :songs="songs" @select="selectItem"></song-list>
             </div>
             <div class="loading-container" v-show="!songs.length">
                 <Loading></Loading>
@@ -49,6 +49,10 @@ const RESERVED_HEIGHT = 40
             title: {
                 type: String,
                 default: ''
+            },
+            rank: {
+                type: Boolean,
+                default: false
             }
         },
         data() {

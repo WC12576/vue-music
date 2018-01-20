@@ -11,9 +11,9 @@ function findIndex(list,song) {
 
 export const selectPlay = function ({commit,state},{list,index}) {
     commit(types.SET_PLAYLIST,list)
-    //xu yao pan duan bo fang mo shi 
+    //需要判断播放模式
     if(state.mode === playMode.random) {
-        //sui ji bo fang xu yao gai bian bo fang lie biao
+        //随机播放需要改播放列表
         let randomList = shuffle(list)
         commit(types.SET_PLAYLIST,randomList)
         index = findIndex(randomList,list[index])
