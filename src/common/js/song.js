@@ -43,7 +43,7 @@ export function createSong(musicData) {
         url:`http://isure.stream.qqmusic.qq.com/C100${musicData.songmid}.m4a?fromtag=32`
     })
 }
-function filterSinger(singer) {
+export function filterSinger(singer) {
     let ret = []
     if(!singer){
         return ''
