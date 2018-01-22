@@ -34,3 +34,45 @@ export const randomPlay = function({commit},{list}) {
     commit(types.SET_FULL_SCREEN,true)
     commit(types.SET_PLAYING_STATE,true)
 }
+
+export const insertSong = function({commit,state},song) {
+    let currentIndex = state.currentIndex
+    let playList = state.playList.slice()
+    let sequenceList = state.sequenceList.slice()
+    //记录当前播放歌曲
+    let currentSong = playList[currentIndex]
+    //搜索查找歌曲的索引
+    let fpIndex = findIndex(playList,song)
+    //插入歌曲，索引＋１
+    currentIndex++
+    //插入该首歌到当前位置
+    playList.splice(currentIndex,0,song)
+    //遍历已存在列表是否存在插入歌曲
+    if(fpIndex > -1) {
+        //当前位置大于已存在位置，删除原位置，索引－１
+        if(currentIndex > fpIndex) {
+            playList.splice(fpIndex,1)
+            currentIndex--
+        } else {
+            //当前位置小于已存在位置，直接删除
+            playList.splice(fpIndex+1,1)
+        }
+    }
+    let currentSIndex = findIndex(sequenceList,currentSong) + 1
+    let fsIndex = findIndex(sequenceList,song)
+    sequenceList.splice(currentSIndex,0,song)
+    if(fsIndex > -1) {
+        if(currentSIndex > fsIndex) {
+            sequenceList.splice(fsIndex,1)
+        } else {
+            sequenceList.splice(fsIndex+1,1)
+        }
+    }
+    commit(types.SET_PLAYLIST,playList)
+    commit(types.SET_SEQUENCE_LIST,sequenceList)
+    commit(types.SET_CURRENT_INDEX,currentIndex)
+    commit(types.SET_FULL_SCREEN,true)
+    commit(types.SET_PLAYING_STATE,true)
+
+
+}
