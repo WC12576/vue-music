@@ -28,6 +28,7 @@ export default {
         },200))
     },
     methods: {
+        //对外提供调用借口
         clear() {
             this.query = ''
         },

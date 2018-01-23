@@ -54,6 +54,9 @@ export default {
         }
     },
     methods: {
+        refresh() {
+            this.$refs.suggest.refresh()
+        },
         search() {
             this.page = 1
             this.$refs.suggest.scrollTo(0, 0)
