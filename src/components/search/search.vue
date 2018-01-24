@@ -82,6 +82,7 @@ export default {
             this.$refs.searchBox.setQuery(query)
         },
         onQueryChange(query) {
+            //console.log(query)
             this.query = query
         },
         blurInput() {

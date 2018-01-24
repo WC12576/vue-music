@@ -82,13 +82,15 @@
                 <i :class="miniIcon" @click.stop="togglePlaying" class="icon-mini"></i>
               </ProgressCircle>  
             </div>
-            <div class="control">
+            <div class="control" @click.stop="showList">
                 <i class="icon-playlist"></i>
             </div>
           </div>
       </transition> 
       <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="timeUpdate" @ended="end"></audio>  
+      <Playlist ref="playlist"></Playlist>
     </div>
+    
 </template>
 
 <script>
@@ -100,9 +102,12 @@ import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
+import Playlist from 'components/playlist/playlist'
+import {playerMixin} from 'common/js/mixin'
 
 
 export default {
+    mixins:[playerMixin],
     data() {
       return {
         songReady: false,
@@ -127,11 +132,11 @@ export default {
       disableClass() {
         return this.songReady ? '' : 'disable'
       },
-      playMode() {
-        return this.mode === playMode.sequence ? 'icon-sequence' 
-                             : this.mode === playMode.loop ? 'icon-loop' 
-                             : 'icon-random'
-      },
+      // playMode() {
+      //   return this.mode === playMode.sequence ? 'icon-sequence' 
+      //                        : this.mode === playMode.loop ? 'icon-loop' 
+      //                        : 'icon-random'
+      // },
       percent() {
         return this.currentTime / this.currentSong.duration
       },
@@ -240,24 +245,24 @@ export default {
             this.currentLyric.seek(this.currentSong.duration * percent * 1000)
           }
         },
-        changeMode() {
-          const mode = (this.mode + 1) % 3
-          this.setPlayMode(mode)
-          let list = null
-          if(mode === playMode.random) {
-            list = shuffle(this.sequenceList) 
-          } else {
-            list = this.sequenceList
-          }
-          this.resetCurrentIndex(list)
-          this.setPlayList(list)
-        },
-        resetCurrentIndex(list) {
-          let index = list.findIndex((item) => {
-            return item.id === this.currentSong.id
-          })
-          this.setCurrentIndex(index)
-        },
+        // changeMode() {
+        //   const mode = (this.mode + 1) % 3
+        //   this.setPlayMode(mode)
+        //   let list = null
+        //   if(mode === playMode.random) {
+        //     list = shuffle(this.sequenceList) 
+        //   } else {
+        //     list = this.sequenceList
+        //   }
+        //   this.resetCurrentIndex(list)
+        //   this.setPlayList(list)
+        // },
+        // resetCurrentIndex(list) {
+        //   let index = list.findIndex((item) => {
+        //     return item.id === this.currentSong.id
+        //   })
+        //   this.setCurrentIndex(index)
+        // },
         getLyric() {
           this.currentSong.getLyric().then((lyric) => {
             this.currentLyric = new Lyric(lyric, this.handleLyric)
@@ -333,6 +338,9 @@ export default {
           this.$refs.middleL.style.transitionDuration = `300ms`
           
         },
+        showList() {
+          this.$refs.playlist.show()
+        },
         _pad(num,n=2) {
           let len = num.toString().length
           while(len < n) {
@@ -402,7 +410,11 @@ export default {
         })
     },
     watch: {
-      currentSong(oldSong,newSong) {
+      currentSong(newSong,oldSong) {
+        //删除播放列表最后一首歌曲时直接return
+        if(!newSong.id) {
+          return
+        }
         if(newSong.id === oldSong.id) {
           return
         }
@@ -424,7 +436,8 @@ export default {
     components: {
       ProgressBar,
       ProgressCircle,
-      Scroll
+      Scroll,
+      Playlist
     } 
 }
 </script>
