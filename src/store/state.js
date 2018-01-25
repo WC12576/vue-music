@@ -1,5 +1,5 @@
 import {playMode} from 'common/js/config'
-import {loadSearch} from 'common/js/catch'
+import {loadSearch,loadPlay} from 'common/js/catch'
 
 
 const state = {
@@ -12,7 +12,8 @@ const state = {
     currentIndex: -1,
     disc: {},
     topList: {},
-    searchHistory:loadSearch()
+    searchHistory:loadSearch(),
+    playHistory:loadPlay()
 }
 
 

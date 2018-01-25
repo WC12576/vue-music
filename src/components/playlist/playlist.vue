@@ -27,7 +27,7 @@
                     </transition-group>
                 </Scroll>
                 <div class="list-operate">
-                    <div class="add">
+                    <div class="add"  @click="addSong">
                         <i class="icon-add"></i>
                         <span class="text">添加歌曲到列队</span>
                     </div>
@@ -38,8 +38,11 @@
             </div>
             <Confirm ref="confirm" text="是否清空播放列表" confirmBtnText="清空"
                      @confirm="confirmClear"></Confirm>
+            <AddSong ref="addsong"></AddSong>
         </div>
+        
     </transition>
+    
   
 </template>
 
@@ -50,6 +53,7 @@ import {playMode} from 'common/js/config'
 import Scroll from 'base/scroll/scroll'
 import Confirm from 'base/confirm/confirm'
 import {playerMixin} from 'common/js/mixin'
+import AddSong from 'components/add-song/add-song'
 
 
 
@@ -110,7 +114,7 @@ export default {
           //顺序播放时currentIndex与index相同，随机播放时不一致
           //console.log(index)
           //console.log(this.currentIndex)
-          this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+          this.$refs.listContent.scrollToElement(this.$refs.list.$el.children[index], 300)
       },
       deleteOne(item) {
           this.deleteSong(item)
@@ -128,6 +132,9 @@ export default {
           //与deleteOne相同的问题
           this.deleteSongList()
           this.hide()
+      },
+      addSong() {
+          this.$refs.addsong.show()
       },
       ...mapMutations({
           setCurrentIndex: 'SET_CURRENT_INDEX',
@@ -148,7 +155,8 @@ export default {
   },
   components: {
       Scroll,
-      Confirm
+      Confirm,
+      AddSong
   }
 }
 </script>

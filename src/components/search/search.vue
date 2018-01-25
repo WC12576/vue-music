@@ -46,10 +46,10 @@ import Scroll from 'base/scroll/scroll'
 import {getHotKey} from 'api/search'
 import {ERR_OK} from 'api/config'
 import {mapActions,mapGetters} from 'vuex'
-import {playListMixin} from 'common/js/mixin'
+import {playListMixin,searchMixin} from 'common/js/mixin'
 
 export default {
-    mixins: [playListMixin],
+    mixins: [playListMixin,searchMixin],
     data() {
         return {
             hotKey: [],
@@ -81,16 +81,16 @@ export default {
         addQuery(query) {
             this.$refs.searchBox.setQuery(query)
         },
-        onQueryChange(query) {
-            //console.log(query)
-            this.query = query
-        },
-        blurInput() {
-            this.$refs.searchBox.blur()
-        },
-        saveSearch() {
-            this.saveSearchHistory(this.query)
-        },
+        // onQueryChange(query) {
+        //     //console.log(query)
+        //     this.query = query
+        // },
+        // blurInput() {
+        //     this.$refs.searchBox.blur()
+        // },
+        // saveSearch() {
+        //     this.saveSearchHistory(this.query)
+        // },
         deleteOne(item) {
             this.deleteSearchHistory(item)
         },
