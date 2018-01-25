@@ -11,7 +11,7 @@
                         </span>
                     </h1>
                 </div>
-                <Scroll class="list-content" :data="sequenceList" ref="listContent">
+                <Scroll class="list-content" :data="sequenceList" ref="listContent" :refreshDelay="refreshDelay">
                     <transition-group ref="list"　name="list" tag="ul">
                         <li :key="item.id" class="item" v-for="(item,index) in sequenceList"
                             @click="selectItem(item,index)" ref="listItem">
@@ -61,7 +61,11 @@ export default {
   mixins:[playerMixin],
   data() {
       return {
-          showFlag: false
+          showFlag: false,
+          //添加歌曲到播放列表后，进入列表界面新添加的歌曲无法显示，ｓｃｒｏｌｌ滚不到底
+          //添加动画后，由于动画存在变化时间，导致ｓｃｒｏｌｌ高度计算错误
+          //手动控制ｓｃｒｏｌｌ高度计算刷新的时间
+          refreshDelay: 100
       }
   },
   computed: {

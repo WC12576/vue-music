@@ -21,7 +21,7 @@
                     </div>
                   </Scroll>
                   <Scroll v-if="this.currentIndex === 1" :data="searchHistory"
-                          ref="searchList" class="list-scroll">
+                          ref="searchList" class="list-scroll"　:refreshDelay="refreshDelay">
                     <div class="list-inner">
                         <SearchList :searches="searchHistory"  @delete="deleteOne" 
                                     @select="addQuery"></SearchList>
