@@ -1,5 +1,5 @@
 import {playMode} from 'common/js/config'
-import {loadSearch,loadPlay} from 'common/js/catch'
+import {loadSearch,loadPlay,loadFavorite} from 'common/js/catch'
 
 
 const state = {
@@ -13,7 +13,8 @@ const state = {
     disc: {},
     topList: {},
     searchHistory:loadSearch(),
-    playHistory:loadPlay()
+    playHistory:loadPlay(),
+    favoriteList:loadFavorite()
 }
 
 
