@@ -87,7 +87,7 @@
             </div>
           </div>
       </transition> 
-      <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="timeUpdate" @ended="end"></audio>  
+      <audio :src="currentSong.url" ref="audio" @play="ready" @error="error" @timeupdate="timeUpdate" @ended="end"></audio>  
       <Playlist ref="playlist"></Playlist>
      
     </div>
@@ -267,6 +267,10 @@ export default {
         // },
         getLyric() {
           this.currentSong.getLyric().then((lyric) => {
+            //歌词异步获取，快速切换时歌词不匹配跳过
+            if(this.currentSong.lyric !== lyric) {
+              return
+            }
             this.currentLyric = new Lyric(lyric, this.handleLyric)
             if(this.playing) {
               this.currentLyric.play()
@@ -426,15 +430,17 @@ export default {
         if(this.currentLyric) {
           this.currentLyric.stop()
         }
-        this.$nextTick(() => {
+        //快速切换时暂停歌曲无效
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
           this.$refs.audio.play()
           this.getLyric()
-        })
+        },1000)
       },
       playing(newPlaying) {
         this.$nextTick(() => {
           let audio = this.$refs.audio
-          newPlaying ? audio.play() :audio.pause()
+          newPlaying ? audio.play() :　audio.pause()
         })
       },
     },
