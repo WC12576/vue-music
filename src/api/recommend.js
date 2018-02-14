@@ -13,7 +13,7 @@ export function getRecommend() {
 }
 // 直接请求受到了host和referer的限制,自己利用后端node代理
 export function getDiscList() { // 请求歌单数据
-    const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+    const url = '/api/getDiscList'
   
     const data = Object.assign({}, commonParams, {
       platform: 'yqq',
