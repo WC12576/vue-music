@@ -27,7 +27,7 @@
       text-align: center
       .tab-link
         padding-bottom: 5px
-        color: $color-text-l
+        color: $color-text-d
         position: relative
       .tab-link:before
         content: ''
